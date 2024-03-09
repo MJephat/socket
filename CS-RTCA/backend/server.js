@@ -1,5 +1,14 @@
 const express = require("express");
+const dotenv = require("dotenv");
 
 const app = express();
+dotenv.config();
 
-app.listen(6000, console.log("server started on port 6000!"));
+
+app.get('/', (req, res) => {
+    res.send("Api is running!")
+})
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, console.log(`server started on port ${PORT}!`));

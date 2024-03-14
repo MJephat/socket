@@ -1,5 +1,8 @@
-import { Box, Button, Menu, MenuButton, Text, Tooltip } from '@chakra-ui/react'
 import React, { useState } from 'react'
+import {Avatar, Box, Button, Flex, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, Tooltip } from '@chakra-ui/react'
+import {BellIcon, ChevronDownIcon} from '@chakra-ui/icons'
+import { ChatState } from "../../components/context/chatProvider";
+import ProfileModal from './profileModel';
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("")
@@ -7,42 +10,64 @@ const SideDrawer = () => {
   const [loading, setLoading] = useState(false)
   const [loadingChat, setLoadingChat] = useState()
 
+  const { user } =  ChatState();
   
 
   return (
+    <>
+    
   <Box
   d="flex"
-  justifyContent={"space-between"}
+  justifyContent="space-between"
   alignItems={"center"}
-  bg={"white"}
-  w={"100%"}
-  p={"5px 10px 5px 10px"}
-  borderWidth={"5px"}
-  >
-    <Tooltip label="search users to chat"
-    hasArrow
-    placement='bottom-end'>
-      <Button variant="ghost">
-      <i class="fa fa-search" aria-hidden="true"></i>
-      <Text  d={{ base: "none", md: "flex"}} px="4">
-
+  bg="white"
+  w="100%"
+  p="5px 10px 5px 10px"
+  borderWidth="5px"
+>
+  <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
+    <Button variant="ghost">
+      <i className="fas fa-search"></i>
+      <Text d={{ base: "none", md: "flex" }} px={4}>
         Search User
-      </Text>
+        </Text>
       </Button>
     </Tooltip>
 
-    <Text fontSize = "2x1" fontFamily={"Work sans"}>
+    
+    <Text fontSize="2xl" fontFamily="Work sans" 
+    //  justifyContent="space-between"
+     alignItems="center">
       Chat-A-Chat
     </Text>
 
     <div>
       <Menu>
         <MenuButton p={1}>
-
+          <BellIcon fontSize={"2xl"} m={1} />
         </MenuButton>
+        {/* <MenuList></MenuList> */}
+      </Menu>
+      <Menu>
+        <MenuButton 
+        as={Button} bg={"white"}
+        rightIcon={<ChevronDownIcon/>}>
+      <Avatar size="sm" cursor="pointer" name={user.name} src={user.pic}/>
+        </MenuButton>
+        <MenuList>
+          <ProfileModal user={user}>
+           <MenuItem>My profile</MenuItem>
+        </ProfileModal>
+        
+          <MenuDivider />
+          <MenuItem>Logout</MenuItem>
+        </MenuList>
       </Menu>
     </div>
   </Box>
+
+
+  </>
   )
 }
 

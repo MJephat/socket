@@ -10,28 +10,28 @@ const ProfileModal = ({user, children}) => {
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (<IconButton
-            d={{base: "flex" }}
+            display={{base: 'flex' }}
             icon={<ViewIcon />}
-            onClick={onOpen} />
+            onClick={onOpen} 
+            />
          )}
-         <Modal size="lg"  isOpen={isOpen} onClose={onClose} isCentered >
+         <Modal size="lg"  onClose={onClose} isOpen={isOpen}  isCentered>
         <ModalOverlay />
         <ModalContent h={"410px"}>
-            <center>
+            {/* <center> */}
           <ModalHeader
-          fontSize={"40PX"}
-          fontFamily={"Work sans"}
-          d="flex"
-          justifyContent={"center"}
-          alignItems={"center"}
+          fontSize={'40px'}
+          fontFamily={'Work sans'}
+          display={'flex'}
+          justifyContent={'center'}
           >
             {user.name}
             </ModalHeader>
-            </center>
+            {/* </center> */}
           <ModalCloseButton />
-          <center>
+          {/* <center> */}
           <ModalBody 
-            d="flex"
+            display={'flex'}
             flexDir="column"
             alignItems="center"
             justifyContent="space-between"
@@ -47,7 +47,7 @@ const ProfileModal = ({user, children}) => {
             fontFamily="Work sans"
             >Email:{user.email}</Text>
           </ModalBody>
-          </center>
+          {/* </center> */}
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={onClose}>
               Close

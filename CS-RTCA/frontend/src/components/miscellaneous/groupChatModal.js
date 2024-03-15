@@ -4,6 +4,7 @@ import { ChatState } from '../context/chatProvider';
 import axios from 'axios';
 import UserListItem from '../UserAvatar/userListItem'
 import UserBadgeItem from '../UserAvatar/userBadgeItem';
+import { warning } from 'framer-motion';
 
 const GroupChatModal = ({ children }) => {
 
@@ -47,7 +48,48 @@ const GroupChatModal = ({ children }) => {
         }
     };
 
-    const handleSubmit = () => {}; 
+    const handleSubmit = async () => {
+        if (!groupChatName || !selectedUsers){
+            toast({
+                title: "please fill all the fields",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+        try{
+            const config ={
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            const { data } = await axios.post("/api/chat/group",{
+                name: groupChatName,
+                users: JSON.stringify(selectedUsers.map((user)=>user._id)),
+            }, config);
+            setChats([data, ...chats])
+            onClose();
+            toast({
+                title: "New Group Chat Created",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+        }catch(error){
+            toast({
+                title: "Failed to create Chat",
+                description: error.response.data,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+        }
+    }; 
 
     const handleGroup= (userToAdd) => {
         if(selectedUsers.includes(userToAdd)){

@@ -8,14 +8,20 @@ import UpdateGroupChatModal from './miscellaneous/updateGroupChat';
 import axios from 'axios';
 import "../components/sytle.css";
 import ScrollableChat from './scrollableCat';
+import io from 'socket.io-client'
+
+
+const ENDPOINT = "http://localhost:8080";
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain}) => {
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
+  const [socketConnected, setSocketConnected] = useState(false);
 
-  const { user,selectedChat, setSelectedChat} = ChatState();
+  const { user ,selectedChat, setSelectedChat} = ChatState();
 
   const toast = useToast();
 
@@ -37,6 +43,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
       console.log(messages)
       setMessages(data);
       setLoading(false);
+
+      socket.emit("join chat", selectedChat._id)
       
     } catch (error) {
            toast({
@@ -51,9 +59,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
     }
   };
 
+   useEffect(() => {
+     socket = io(ENDPOINT);
+     socket.emit("setup", user);
+     socket.on("connected", () => setSocketConnected(true));
+   }, []);
+
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   },[selectedChat]);
+
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if(!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id){
+// give notification
+      }else{
+        setMessages([...messages,newMessageRecieved]);
+      }
+    });
+  })
 
   const sendMessage = async (event) =>{
     if (event.key === "Enter" && newMessage){
@@ -73,6 +99,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
 
         console.log(data);
 
+        socket.emit("new message", data);
         setMessages([...messages, data]);
 
       } catch (error) {
@@ -88,6 +115,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
       }
     }
   };
+
+
 
    const typingHandler = (e) => {
     setNewMessage(e.target.value);

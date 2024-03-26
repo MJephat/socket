@@ -67,21 +67,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
      socket.emit("setup", user);
      socket.on("connected", () => setSocketConnected(true));
      socket.on("typing", () => setIsTyping(true));
-     socket.on("stopping", ()=> setIsTyping(false))
+     socket.on("stop typing", ()=> setIsTyping(false));
    }, []);
 
   useEffect(() => {
     fetchMessages();
+
     selectedChatCompare = selectedChat;
   },[selectedChat]);
 
 
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
-      if(!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id){
-// give notification
-      }else{
-        setMessages([...messages,newMessageRecieved]);
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        // give notification
+      } else {
+        setMessages([...messages, newMessageRecieved]);
       }
     });
   })
@@ -206,9 +210,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
           /> : <div className='messages'> 
             <ScrollableChat messages={messages} />
             </div>}
+
+
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
 
-            {isTyping ? <div>loading....</div>:<></>}
+            {isTyping ? <div>typing....</div>:<></>}
 
               <Input 
               variant="filled"
